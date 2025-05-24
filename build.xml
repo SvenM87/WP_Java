@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- You may freely edit this file. See commented blocks below for -->
+<!-- some examples of how to customize the build. -->
+<!-- (If you delete it and reopen the project it will be recreated.) -->
+<!-- By default, only the Clean and Build commands use this build script. -->
+<!-- Commands such as Run, Debug, and Test only use this build script if -->
+<!-- the Compile on Save feature is turned off for the project. -->
+<!-- You can turn off the Compile on Save (or Deploy on Save) setting -->
+<!-- in the project's Project Properties dialog box.-->
+<project name="PrototypeJavaFX" default="default" basedir="." xmlns:j2semodularproject="http://www.netbeans.org/ns/j2se-modular-project/1">
+    <description>Builds, tests, and runs the project Prototype</description>
+    <import file="nbproject/build-impl.xml"/>
+    <!--
+
+    There exist several targets which are by default empty and which can be 
+    used for execution of your tasks. These targets are usually executed 
+    before and after some main targets. They are: 
+
+      -pre-init:                 called before initialization of project properties
+      -post-init:                called after initialization of project properties
+      -pre-compile:              called before javac compilation
+      -post-compile:             called after javac compilation
+      -pre-compile-single:       called before javac compilation of single file
+      -post-compile-single:      called after javac compilation of single file
+      -pre-compile-test:         called before javac compilation of JUnit tests
+      -post-compile-test:        called after javac compilation of JUnit tests
+      -pre-compile-test-single:  called before javac compilation of single JUnit test
+      -post-compile-test-single: called after javac compilation of single JUunit test
+      -pre-jar:                  called before JAR building
+      -post-jar:                 called after JAR building
+      -post-clean:               called after cleaning build products
+
+    (Targets beginning with '-' are not intended to be called on their own.)
+
+    Example of inserting an obfuscator after compilation could look like this:
+
+        <target name="-post-compile">
+            <obfuscate>
+                <fileset dir="${build.classes.dir}"/>
+            </obfuscate>
+        </target>
+
+    For list of available properties check the imported 
+    nbproject/build-impl.xml file. 
+
+
+    Another way to customize the build is by overriding existing main targets.
+    The targets of interest are: 
+
+      -init-macrodef-javac:     defines macro for javac compilation
+      -init-macrodef-junit:     defines macro for junit execution
+      -init-macrodef-debug:     defines macro for class debugging
+      -init-macrodef-java:      defines macro for class execution
+      -do-jar:                  JAR building
+      run:                      execution of project 
+      -javadoc-build:           Javadoc generation
+      test-report:              JUnit report generation
+
+    Notice that the overridden target depends on the jar target and not only on 
+    the compile target as the regular run target does. Again, for a list of available 
+    properties which you can use, check the target you are overriding in the
+    nbproject/build-impl.xml file. 
+
+    -->
+
+    <property name="do.image" value="true"/>
+    <property name="do.installer" value="true"/>
+    <property name="extres.dir" location="ExternalResources"/>
+    <property name="config.dir" location="configuration"/>
+    
+    <!-- MainJar ergibt sich aus dem Modulnamen in welcher sich die main-Methode befindet -->
+    <property name="MainJar" value="myModule.jar"/>
+    
+    <property name="ImageDest" location="dist${file.separator}Images"/>
+    <property name="InstDest" location="${ImageDest}${file.separator}Installer"/>
+    <property name="TempDist" location="dist${file.separator}jarDir"/>
+    
+    <!-- Name ist der Name der Anwendung, keine Leerzeichen oder Sonderzeichen verwenden -->
+    <property name="Name" value="MyAppName"/>
+    
+    <property name="MainClass" value="theApp.MainApp"/>    
+    <property name="tmp.dir" location="dist${file.separator}tmp"/>    
+    
+    <!-- Beispiel für das Einbinden weitere explizite Module:
+    <property name="AddModules" value="javafx.base,javafx.controls,javafx.fxml,javafx.web,java.net.http,jdk.crypto.ec,org.commonmark,com.fasterxml.jackson.annotation,com.fasterxml.jackson.databind,com.fasterxml.jackson.core"/>
+    Die Liste ist, unabhängig von der zugrunde liegenden Betriebssystem, kommasepariert.
+    -->
+    <property name="AddModules" value="javafx.base,javafx.controls,javafx.fxml"/>
+    
+    <!-- Die Property ModPath muss an die jeweilige Projektumgebung 
+    angepasst werden!! Die Anfuehrungszeichen (quot) sind wegen der 
+    Leerzeichen im Pfad notwendig
+    Beispiel mit weiterem expliziten Modul
+    <property name="ModPath" value="&quot;C:${file.separator}Program Files${file.separator}JavaFX${file.separator}javafx-jmods-21.0.4&quot;${path.separator}Pfad_zu_extplizite_Module"/>
+    
+    C:\Program Files\JavaFX\javafx-jmods-21.0.6
+    -->
+    <property name="ModPath" value="&quot;C:${file.separator}Program Files${file.separator}JavaFX${file.separator}javafx-jmods-21.0.6&quot;"/>
+    
+    <!-- Für Windows als Icon eine ico-Datei und msi als Installationstyp -->
+    <property name="icon" location="${extres.dir}${file.separator}BRB_Icon.ico"/>
+    <property name="installtype" value="msi"/>
+    <property name="dirchooser" value="--win-dir-chooser"/>
+    
+    <!-- Für Linux als Icon eine png-Datei und deb als Installationstyp -->
+    <!--    
+    <property name="icon" location="${extres.dir}${file.separator}BRB_Icon.png"/>
+    <property name="installtype" value="deb"/>
+    <property name="dirchooser" value=""/>
+    -->
+    
+    <!-- Für Mac als Icon eine png-Datei und dmg als Installationstyp -->
+    <!--    
+    <property name="icon" location="${extres.dir}${file.separator}BRB_Icon.png"/>
+    <property name="installtype" value="dmg"/>
+    <property name="dirchooser" value=""/>
+    -->
+    
+    <!-- Nur falls Konfigurationsdateien in einem Konfigurationsverzeichnis 
+         hinzugefügt werden müssen (oben schon gesetzt)
+    <property name="config.dir" location="Configuration"/>
+    -->   
+    
+    <target name="-post-jar"  description="Create Image" if="${do.image}">
+        <echo level="info" message="----------------"/>
+        <echo level="info" message="Create Image"/>
+        <echo level="info" message="----------------"/>
+        <echo level="info" message="Extres: ${extres.dir}"/>
+        <echo level="info" message="Icon: ${icon}"/>
+        <echo level="info" message="MainJar: ${MainJar}"/>
+        <echo level="info" message="ImageDest: ${ImageDest}"/>
+        <echo level="info" message="Name: ${Name}"/>
+        <echo level="info" message="ModPath: ${ModPath}"/>
+        <echo level="info" message="MainClass: ${MainClass}"/>
+        <echo level="info" message="InstDest: ${InstDest}"/>
+        <echo level="info" message="AddModules: ${AddModules}"/>
+        
+        <mkdir dir="${TempDist}"/>
+        <copy todir="${TempDist}">
+            <fileset dir="dist">
+                <include name="**/*.jar"/>
+            </fileset>           
+        </copy> 
+        <delete dir="${ImageDest}"/>      
+        <!-- 
+        Konnte bisher nur auf Windows 10,Windows 11, Linux und Mac OS X getestet werden.
+        -->                            
+        <exec executable="jpackage" failonerror="true">
+            <arg line="--temp dist/tmp"/>
+            <arg line="--dest ${ImageDest}"/>
+            <arg line="--name ${Name}"/>
+            <arg line="--icon ${icon}"/> 
+            <arg line="--input ${TempDist}"/>
+            <arg line="--type app-image"/> 
+            <arg line="--module-path ${ModPath}"/>
+            <arg line="--add-modules ${AddModules}"/>
+            <arg line="--main-jar ${MainJar}"/> 
+            <arg line="--main-class ${MainClass}"/>
+            <arg line="--verbose"/>
+        </exec>
+      
+        <!-- Nur falls Konfigurationsdateien hinzugefügt werden müssen-->
+        <copy todir="${ImageDest}/${Name}/Configuration">
+            <fileset dir="${config.dir}">
+                <include name="**/*.*"/>
+            </fileset>           
+        </copy>
+        
+        <antcall target="CreateInstaller"></antcall>               
+    </target>
+    
+    <target name="CreateInstaller" description="Create Installer" if="${do.installer}">
+        <echo level="info" message="----------------"/>
+        <echo level="info" message="Create Installer"/>
+        <echo level="info" message="----------------"/>
+        <delete dir="${tmp.dir}"/>
+
+        <exec executable="jpackage" failonerror="true">
+            <arg line="--temp dist${file.separator}tmp"/>
+            <arg line="--dest ${InstDest}"/>
+            <arg line="--type ${installtype}"/> 
+            <arg line="--app-image ${ImageDest}${file.separator}${Name}"/>
+            <arg line="--name ${Name}"/>
+            <arg line="--icon ${icon}"/> 
+            <arg line="--license-file ${extres.dir}${file.separator}Lizenz.txt"/> 
+            <arg line="${dirchooser}"/> 
+            <arg line="--verbose"/>
+        </exec>        
+    </target>     
+</project>

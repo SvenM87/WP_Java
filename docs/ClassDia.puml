@@ -1,0 +1,47 @@
+@startuml
+class CsvImporter {
+  - separator: String
+  - csvFile: File
+  - hasHeader: boolean
+  + loadFile(path: String): List<String[]>
+  + parseColumns(dateIndex: int, priceIndex: int): List<PriceEntry>
+}
+class PriceEntry {
+  - date: LocalDate
+  - closePrice: double
+}
+class DataCleaner {
+  + interpolateMissingValues(data: List<PriceEntry>): List<PriceEntry>
+  + removeOutliers(data: List<PriceEntry>): List<PriceEntry>
+}
+class StatisticsAnalyzer {
+  + calculateReturns(data: List<PriceEntry>): List<Double>
+  + calculateMean(returns: List<Double>): double
+  + calculateStdDev(returns: List<Double>): double
+  + calculateSharpeRatio(): double
+}
+class MonteCarloEngine {
+  - iterations: int
+  - horizonYears: int
+  - startCapital: double
+  - monthlyContribution: double
+  + runSimulation(returns: List<Double>): List<Double>
+  + simulateWithCashFlows(): List<Double>
+  + calculateConfidenceIntervals(): ConfidenceInterval
+}
+class ConfidenceInterval {
+  - lowerBound: double
+  - upperBound: double
+}
+class ChartGenerator {
+  + generateHistogram(data: List<Double>): Image
+  + generateGaussianCurve(data: List<Double>): Image
+  + exportChart(chart: Image, filename: String): void
+}
+CsvImporter --> PriceEntry : parseColumns()
+DataCleaner --> CsvImporter : verwendet bereinigte Daten
+StatisticsAnalyzer --> DataCleaner : analysiert bereinigte Daten
+MonteCarloEngine --> StatisticsAnalyzer : nutzt Renditen
+MonteCarloEngine --> ConfidenceInterval : gibt Intervall aus
+ChartGenerator --> MonteCarloEngine : visualisiert Ergebnisse
+@enduml

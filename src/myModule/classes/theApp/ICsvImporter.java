@@ -4,10 +4,14 @@
  */
 package theApp;
 
+import java.util.List;
+
 /**
  *
  * @author Sven
  */
 public interface ICsvImporter {
-    
+    public void setSeparator(String separator);
+    public List<String[]> loadFile(String path);
+    public List<PriceEntry> parseColumns(int dateIndex, int priceIndex);
 }

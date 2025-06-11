@@ -9,5 +9,7 @@ package theApp;
  * @author Sven
  */
 public interface ILoggingService {
-    
+    public void logInfo(String msg);
+    public void logError(String msg, Exception ex);
+    public String getLogFilePath();
 }

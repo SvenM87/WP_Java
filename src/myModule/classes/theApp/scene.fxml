@@ -32,7 +32,6 @@
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<?import com.gluonhq.charm.glisten.control.TextField?>
 <?import javafx.scene.chart.BarChart?>
 <?import javafx.scene.chart.CategoryAxis?>
 <?import javafx.scene.chart.LineChart?>
@@ -46,6 +45,7 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
@@ -101,13 +101,13 @@
                            <children>
                               <Button layoutX="169.0" layoutY="17.0" mnemonicParsing="false" text="CSV Laden" />
                               <TextArea layoutX="14.0" layoutY="42.0" prefHeight="54.0" prefWidth="366.0" text="Anzeige der ersten Zwei Zeilen&#10;2. Zeile" />
-                              <TextField floatText="Seperator" layoutX="14.0" layoutY="96.0" />
                               <TableView layoutX="14.0" layoutY="150.0" prefHeight="216.0" prefWidth="565.0">
                                 <columns>
                                   <TableColumn prefWidth="75.0" text="Datum" />
                                   <TableColumn prefWidth="75.0" text="Schlusskurs" />
                                 </columns>
                               </TableView>
+                              <TextField fx:id="txtField_separator" layoutX="14.0" layoutY="113.0" promptText="Separator" />
                            </children>
                         </AnchorPane>
                   </content>

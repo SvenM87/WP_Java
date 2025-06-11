@@ -7,7 +7,7 @@
 <!-- the Compile on Save feature is turned off for the project. -->
 <!-- You can turn off the Compile on Save (or Deploy on Save) setting -->
 <!-- in the project's Project Properties dialog box.-->
-<project name="PrototypeJavaFX" default="default" basedir="." xmlns:j2semodularproject="http://www.netbeans.org/ns/j2se-modular-project/1">
+<project name="WP_Java" default="default" basedir="." xmlns:j2semodularproject="http://www.netbeans.org/ns/j2se-modular-project/1">
     <description>Builds, tests, and runs the project Prototype</description>
     <import file="nbproject/build-impl.xml"/>
     <!--
@@ -98,20 +98,20 @@
     <property name="ModPath" value="&quot;C:${file.separator}Program Files${file.separator}JavaFX${file.separator}javafx-jmods-21.0.6&quot;"/>
     
     <!-- Für Windows als Icon eine ico-Datei und msi als Installationstyp -->
-    <property name="icon" location="${extres.dir}${file.separator}BRB_Icon.ico"/>
+    <property name="icon" location="${extres.dir}${file.separator}Icon.ico"/>
     <property name="installtype" value="msi"/>
     <property name="dirchooser" value="--win-dir-chooser"/>
     
     <!-- Für Linux als Icon eine png-Datei und deb als Installationstyp -->
     <!--    
-    <property name="icon" location="${extres.dir}${file.separator}BRB_Icon.png"/>
+    <property name="icon" location="${extres.dir}${file.separator}Icon.png"/>
     <property name="installtype" value="deb"/>
     <property name="dirchooser" value=""/>
     -->
     
     <!-- Für Mac als Icon eine png-Datei und dmg als Installationstyp -->
     <!--    
-    <property name="icon" location="${extres.dir}${file.separator}BRB_Icon.png"/>
+    <property name="icon" location="${extres.dir}${file.separator}Icon.png"/>
     <property name="installtype" value="dmg"/>
     <property name="dirchooser" value=""/>
     -->

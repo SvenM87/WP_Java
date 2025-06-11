@@ -3,3 +3,5 @@
 
 # Alle Dateien, die mit ~$ beginnen (z. B. temporäre Office-Dateien)
 ~$*
+/build/
+/dist/

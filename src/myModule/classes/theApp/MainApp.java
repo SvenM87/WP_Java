@@ -4,7 +4,9 @@
  */
 package theApp;
 
+
 import java.net.URL;
+import java.util.List;
 import java.util.Locale;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -22,12 +24,12 @@ public class MainApp extends Application{
 
     @Override
     public void start(Stage stage) throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("scene.fxml"));
+        FXMLLoader loader = new FXMLLoader(MainApp.class.getResource("/theApp/scene.fxml"));
         Parent root = loader.load();
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.setTitle("Demo");
-        stage.setResizable(false);
+        stage.setResizable(true);
         URL icon = MainApp.class.getResource("/resources/BRB_Icon.png");
         Image img = new Image(icon.toString());
         stage.getIcons().add(img);
@@ -41,6 +43,23 @@ public class MainApp extends Application{
         // System.setProperty("file.encoding", "UTF-8");
         // Locale.setDefault(Locale.UK);
         launch(args);
+        
+//        CsvImporter importer = new CsvImporter(",");
+//        // importer.setSeparator(","); // Optional: falls CSV mit Semikolon statt Komma
+//
+//        // Datei laden (Pfad anpassen!)
+//        URL res = MainApp.class.getResource("/resources/MSCIWorld.csv");
+//        // Pfad aus der URL
+//        String csvPath = res.getPath();
+//        List<String[]> rawData = importer.loadFile(csvPath);
+//
+//        // Konkrete Spalten parsen: Spalte 0 = Datum, Spalte 1 = Preis
+//        List<PriceEntry> entries = importer.parseColumns(0, 1);
+
+        // Beispiel-Ausgabe
+        // for (PriceEntry entry : entries) {
+        //     System.out.println(entry);
+        // }
     }
         
 }

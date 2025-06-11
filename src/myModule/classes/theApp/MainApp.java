@@ -24,19 +24,34 @@ public class MainApp extends Application{
 
     @Override
     public void start(Stage stage) throws Exception {
+        
+        // Debug Code
+        URL fxmlUrl = MainApp.class.getResource("/theApp/scene.fxml");
+        System.out.println("scene.fxml URL = " + fxmlUrl);
+        // Ende
+        
         FXMLLoader loader = new FXMLLoader(MainApp.class.getResource("/theApp/scene.fxml"));
         Parent root = loader.load();
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.setTitle("Demo");
         stage.setResizable(true);
-        URL icon = MainApp.class.getResource("/resources/BRB_Icon.png");
+        URL icon = MainApp.class.getResource("/resources/Icon.png");
         Image img = new Image(icon.toString());
         stage.getIcons().add(img);
         SceneController controller = loader.getController();
         controller.setStage(stage);
         
         stage.show();
+        
+//        URL url = MainApp.class.getResource("/theApp/scene.fxml");
+//        FXMLLoader loader = new FXMLLoader(url);
+//        Parent root = loader.load();
+//        SceneController controller = loader.getController();
+//        System.out.println("Controller = " + controller);
+//        controller.setStage(stage);
+//        stage.setScene(new Scene(root));
+//        stage.show();
     }    
     
     public static void main(String[] args) {

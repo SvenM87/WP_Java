@@ -47,6 +47,8 @@ public class SceneController implements Initializable {
     @FXML
     private TextArea txtArea_CSV_preview;
     
+    private TextField txtField_separator;
+    
     private final CsvImporter importer = new CsvImporter();
     private final ILoggingService logger = new FileLoggingService();
     

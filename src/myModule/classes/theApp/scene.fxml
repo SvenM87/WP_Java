@@ -50,7 +50,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<VBox prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="theApp.SceneController">
   <children>
     <MenuBar VBox.vgrow="NEVER">
       <menus>
@@ -99,8 +99,8 @@
                   <content>
                     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="5897.0" prefWidth="629.0">
                            <children>
-                              <Button layoutX="169.0" layoutY="17.0" mnemonicParsing="false" text="CSV Laden" />
-                              <TextArea layoutX="14.0" layoutY="42.0" prefHeight="54.0" prefWidth="366.0" text="Anzeige der ersten Zwei Zeilen&#10;2. Zeile" />
+                              <Button fx:id="btn_csv_choose" layoutX="169.0" layoutY="17.0" mnemonicParsing="false" onAction="#openCSV" text="CSV Laden" />
+                              <TextArea fx:id="txtArea_CSV_preview" layoutX="14.0" layoutY="42.0" prefHeight="54.0" prefWidth="366.0" text="Anzeige der ersten Zwei Zeilen&#10;2. Zeile" />
                               <TableView layoutX="14.0" layoutY="150.0" prefHeight="216.0" prefWidth="565.0">
                                 <columns>
                                   <TableColumn prefWidth="75.0" text="Datum" />

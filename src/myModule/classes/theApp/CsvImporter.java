@@ -10,6 +10,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.temporal.ChronoField;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +25,19 @@ public class CsvImporter implements ICsvImporter {
     private File csvFile;
     private boolean hasHeader;
     private List<String[]> dataRows;  // zwischengespeicherte, geparste CSV-Daten
+    
+    // Formatter für Datum
+    DateTimeFormatter formatter = new DateTimeFormatterBuilder()
+        // erstes Pattern: Tag.Monat.Jahr
+        .appendOptional(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+        // zweites Pattern: Monat.Jahr, Tag default = 1
+        .appendOptional(
+            new DateTimeFormatterBuilder()
+                .appendPattern("MM.yyyy")
+                .parseDefaulting(ChronoField.DAY_OF_MONTH, 1)
+                .toFormatter()
+        )
+        .toFormatter();
 
     // Standard-Konstruktor mit Vorgabewerten
     public CsvImporter() {
@@ -34,6 +50,12 @@ public class CsvImporter implements ICsvImporter {
     public CsvImporter(boolean hasHeader) {
         this();
         this.hasHeader = hasHeader;
+    }
+
+    // Optionaler Konstruktor, um Header-Flag zu setzen
+    public CsvImporter(String separator) {
+        this();
+        this.separator = separator;
     }
 
     @Override
@@ -86,7 +108,7 @@ public class CsvImporter implements ICsvImporter {
                 // Parse Datum und Preis aus den angegebenen Spalten
                 String dateText = columns[dateIndex];
                 String priceText = columns[priceIndex];
-                LocalDate date = LocalDate.parse(dateText);           // erfordert Format YYYY-MM-DD
+                LocalDate date = LocalDate.parse(dateText, formatter);           // erfordert Format YYYY-MM-DD
                 double price = Double.parseDouble(priceText);
                 priceEntries.add(new PriceEntry(date, price));
             } catch (Exception e) {

@@ -1,5 +1,5 @@
 # Alle PDF-Dateien ignorieren
-*.pdf
+# *.pdf
 
 # Alle Dateien, die mit ~$ beginnen (z. B. temporäre Office-Dateien)
 ~$*

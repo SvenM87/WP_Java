@@ -82,56 +82,12 @@ class FileLoggingService implements ILoggingService {
   + logError(message: String, exception: Exception): void
 }
 
-' MVC Layer
-interface IImportController {
-  + initialize(): void
-  + onLoadFile(path: String): void
-  + onCleanData(): void
-}
-class ImportController implements IImportController {
-  - importer: ICsvImporter
-  - loggingService: ILoggingService
-  + initialize(): void
-  + onLoadFile(path: String): void
-  + onCleanData(): void
-}
-
-interface ISimulationController {
-  + startSimulation(iterations: int, horizonYears: int, startCapital: double, monthlyContribution: double): void
-}
-class SimulationController implements ISimulationController {
-  - planSimulator: IPlanSimulator
-  - statsAnalyzer: IStatisticsAnalyzer
-  - chartGenerator: IChartGenerator
-  - loggingService: ILoggingService
-  + startSimulation(iterations: int, horizonYears: int, startCapital: double, monthlyContribution: double): void
-}
-
-interface IChartController {
-  + renderHistogram(data: List<Double>): void
-  + renderGaussianCurve(data: List<Double>): void
-}
-class ChartController implements IChartController {
-  - chartGenerator: IChartGenerator
-  - loggingService: ILoggingService
-  + renderHistogram(data: List<Double>): void
-  + renderGaussianCurve(data: List<Double>): void
-}
-
-class MainController {
-  - importController: IImportController
-  - simulationController: ISimulationController
-  - chartController: IChartController
+class SceneController {
+  - 
   - loggingService: ILoggingService
   + switchToImportView(): void
-  + switchToSimulationView(): void
-  + switchToChartView(): void
+  + 
 }
-
-class MainView
-class ImportView
-class SimulationView
-class ChartView
 
 ' Relationships
 CsvImporter *-- "0..*" PriceEntry : contains
@@ -143,26 +99,7 @@ PlanSimulator --> ConfidenceInterval : gibt zurück
 ChartGenerator --> PlanSimulator : visualisiert
 
 ' Injection (composition)
-ImportController *-- ICsvImporter
-ImportController *-- ILoggingService
 
-SimulationController *-- IPlanSimulator
-SimulationController *-- IStatisticsAnalyzer
-SimulationController *-- IChartGenerator
-SimulationController *-- ILoggingService
-
-ChartController *-- IChartGenerator
-ChartController *-- ILoggingService
-
-MainController *-- IImportController
-MainController *-- ISimulationController
-MainController *-- IChartController
-MainController *-- ILoggingService
-
-' MVC wiring
-ImportView --> IImportController
-SimulationView --> ISimulationController
-ChartView --> IChartController
-MainView --> MainController
+SceneController *-- ILoggingService
 
 @enduml

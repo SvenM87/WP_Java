@@ -99,15 +99,16 @@
                   <content>
                     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="5897.0" prefWidth="629.0">
                            <children>
-                              <Button fx:id="btn_csv_choose" layoutX="169.0" layoutY="17.0" mnemonicParsing="false" onAction="#openCSV" text="CSV Laden" />
-                              <TextArea fx:id="txtArea_CSV_preview" layoutX="14.0" layoutY="42.0" prefHeight="54.0" prefWidth="366.0" text="Anzeige der ersten Zwei Zeilen&#10;2. Zeile" />
-                              <TableView layoutX="14.0" layoutY="150.0" prefHeight="216.0" prefWidth="565.0">
+                              <Button fx:id="btn_csv_choose" layoutX="169.0" layoutY="13.0" mnemonicParsing="false" onAction="#openCSV" text="CSV Laden" />
+                              <TextArea fx:id="txtArea_CSV_preview" layoutX="14.0" layoutY="42.0" prefHeight="109.0" prefWidth="366.0" text="Anzeige der ersten Zeilen (5)" />
+                              <TableView layoutX="14.0" layoutY="205.0" prefHeight="216.0" prefWidth="565.0">
                                 <columns>
                                   <TableColumn prefWidth="75.0" text="Datum" />
                                   <TableColumn prefWidth="75.0" text="Schlusskurs" />
                                 </columns>
                               </TableView>
-                              <TextField fx:id="txtField_separator" layoutX="14.0" layoutY="113.0" promptText="Separator" />
+                              <TextField fx:id="txtField_separator" layoutX="14.0" layoutY="162.0" promptText="Separator" />
+                              <Button layoutX="209.0" layoutY="163.0" mnemonicParsing="false" onAction="#readCSV" text="Daten laden" />
                            </children>
                         </AnchorPane>
                   </content>

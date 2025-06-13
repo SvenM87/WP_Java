@@ -98,16 +98,17 @@ public class SceneController implements Initializable {
         try {
             try (BufferedReader br = new BufferedReader(new FileReader(file))) {
                 String line;
+                txtArea_CSV_preview.setText("");
                 while ((line = br.readLine()) != null) {
                     // Überspringe leere Zeilen
                     if (line.trim().isEmpty()) {
                         continue;
                     }
                     // 
-                    if (previewCount < 2) {
+                    if (previewCount < 5) {
                         txtArea_CSV_preview.appendText(line + "\n");
                         previewCount++;
-                    }
+                    } else break;                    
                 }
             } catch (IOException er) {
                 System.err.println("Fehler beim Lesen der Datei: " + er.getMessage());

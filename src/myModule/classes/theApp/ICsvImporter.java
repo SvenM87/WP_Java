@@ -12,6 +12,7 @@ import java.util.List;
  */
 public interface ICsvImporter {
     public void setSeparator(String separator);
-    public List<String[]> loadFile(String path);
-    public List<PriceEntry> parseColumns(int dateIndex, int priceIndex);
+    public CsvImporter loadFile();
+    public CsvImporter parseColumns(int dateIndex, int priceIndex);
+    public List<PriceEntry> getEntrys();
 }

@@ -19,17 +19,25 @@ import java.util.List;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.chart.BarChart;
+import javafx.scene.chart.LineChart;
 
 //import javafx.scene.control.*;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
         
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -42,26 +50,36 @@ import javafx.stage.Stage;
  */
 public class SceneController implements Initializable {
     
-    @FXML
-    private Button btn_csv_choose;
-    @FXML
-    private Button btn_csv_load;
+    @FXML private Button btn_csv_choose;
+    @FXML private Button btn_csv_load;
         
-    @FXML
-    private TextArea txtArea_CSV_preview;
+    @FXML private TextArea txtArea_CSV_preview;
     
-    @FXML
-    private TextField txtField_separator;
-    @FXML
-    private TextField txtField_date;
-    @FXML
-    private TextField txtField_price;
+    @FXML private TextField txtField_separator;
+    @FXML private TextField txtField_date;
+    @FXML private TextField txtField_price;
+    
+    @FXML private CheckBox checkbox_csvHeader;
+    
+    @FXML private TableView table_csv;
+    @FXML private TableColumn table_csv_date;
+    @FXML private TableColumn table_csv_price;
+    
+    @FXML private TableView table_statKeys;
+    @FXML private TableColumn table_statKeys_key;
+    @FXML private TableColumn table_statKeys_value;
+    
+    @FXML private LineChart lineChart_chart;
+    @FXML private BarChart barChart_distribution;
     
     private boolean separatorChecked = false;
     private boolean dateColumnChecked = false;
     private boolean priceColumnChecked = false;
+    private boolean csvReady = false;
     
-    private final CsvImporter csvImporter = null;
+    private File csvFile;
+    
+    private CsvImporter csvImporter = null;
     private final ILoggingService logger = new FileLoggingService();
     
 //    private final FileChooser fileChooser = new FileChooser();
@@ -124,6 +142,7 @@ public class SceneController implements Initializable {
                         previewCount++;
                     } else break;                    
                 }
+                this.csvFile = file;
             } catch (IOException er) {
                 System.err.println("Fehler beim Lesen der Datei: " + er.getMessage());
             }
@@ -163,23 +182,7 @@ public class SceneController implements Initializable {
 //            alert.showAndWait();
 //        }        
 //    }
-    
-    @FXML
-    private void checkDateInput(ActionEvent e) {
-        String input = txtField_date.getText();
-        
-        if (input != null && input.length() == 1 && Arrays.asList(allowedSeparators).contains(input)) {
-            separatorChecked = true;
-            if (separatorChecked && dateColumnChecked && priceColumnChecked) {
-                btn_csv_load.setDisable(false);
-            }
-        }
-    }
-    
-    @FXML
-    private void checkPriceInput(ActionEvent e) {
-        
-    }
+
     
     @FXML
     private void readCsv(ActionEvent e) {
@@ -190,6 +193,14 @@ public class SceneController implements Initializable {
         String priceInput = txtField_price.getText();
         int dateColumn, priceColumn;
         
+        if (this.csvFile == null) {
+            alert.setTitle("CSV zunächst laden");
+            alert.setHeaderText(null);
+            alert.setContentText("Bitte zuerst die CSV laden!");
+            alert.showAndWait();
+            return;
+        }
+        
         if (sepInput == null || sepInput.length() != 1 || !(Arrays.asList(allowedSeparators).contains(sepInput))) {
             alert.setTitle("Ungültiger Separator");
             alert.setHeaderText(null);
@@ -197,6 +208,7 @@ public class SceneController implements Initializable {
             alert.showAndWait();
             return;
         }
+        
         try {
             dateColumn = Integer.parseInt(dateInput);
         } catch (NumberFormatException ex) {
@@ -206,6 +218,7 @@ public class SceneController implements Initializable {
         alert.showAndWait();
         return;
         }
+        
         try {
             priceColumn = Integer.parseInt(priceInput);
         } catch (NumberFormatException ex) {
@@ -216,6 +229,16 @@ public class SceneController implements Initializable {
         return;
         }
         
+        this.csvImporter = new CsvImporter(this.csvFile, sepInput, checkbox_csvHeader.isSelected());
+        csvImporter.parseColumns(dateColumn, priceColumn);
+        //System.out.println(csvImporter.getEntrys());
+        
+        this.table_csv_date.setCellValueFactory(new PropertyValueFactory<>("Date"));
+        this.table_csv_price.setCellValueFactory(new PropertyValueFactory<>("ClosePrice"));
+        ObservableList<PriceEntry> observableEntries = FXCollections.observableArrayList(csvImporter.getEntrys());
+        this.table_csv.setItems(observableEntries);
+        
+        this.csvReady = true;
     }
 
     @Override

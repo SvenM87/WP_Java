@@ -25,6 +25,7 @@ public class CsvImporter implements ICsvImporter {
     private File csvFile;
     private boolean hasHeader;
     private List<String[]> dataRows;  // zwischengespeicherte, geparste CSV-Daten
+    private List<PriceEntry> priceEntries;
     
     // Formatter für Datum
     DateTimeFormatter formatter = new DateTimeFormatterBuilder()
@@ -40,22 +41,11 @@ public class CsvImporter implements ICsvImporter {
         .toFormatter();
 
     // Standard-Konstruktor mit Vorgabewerten
-    public CsvImporter() {
-        this.separator = ",";
-        this.hasHeader = true;
-        this.dataRows = new ArrayList<>();
-    }
-
-    // Optionaler Konstruktor, um Header-Flag zu setzen
-    public CsvImporter(boolean hasHeader) {
-        this();
-        this.hasHeader = hasHeader;
-    }
-
-    // Optionaler Konstruktor, um Header-Flag zu setzen
-    public CsvImporter(String separator) {
-        this();
+    public CsvImporter(File csvFile, String separator, boolean hasHeader) {
+        this.csvFile = csvFile;
         this.separator = separator;
+        this.hasHeader = hasHeader;
+        this.dataRows = new ArrayList<>();
     }
 
     @Override
@@ -64,13 +54,8 @@ public class CsvImporter implements ICsvImporter {
     }
 
     @Override
-    public List<String[]> loadFile(String path) {
-        this.csvFile = new File(path);
+    public CsvImporter loadFile() {
         List<String[]> rows = new ArrayList<>();
-        if (!csvFile.exists()) {
-            System.err.println("Datei nicht gefunden: " + path);
-            return rows; // leere Liste zurückgeben, falls Datei nicht existiert
-        }
         try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
             String line;
             boolean firstLine = true;
@@ -94,28 +79,37 @@ public class CsvImporter implements ICsvImporter {
         } catch (IOException e) {
             System.err.println("Fehler beim Lesen der Datei: " + e.getMessage());
         }
-        return rows;
+        return this;
     }
 
     @Override
-    public List<PriceEntry> parseColumns(int dateIndex, int priceIndex) {
+    public CsvImporter parseColumns(int dateIndex, int priceIndex) {
         if (this.dataRows == null || this.dataRows.isEmpty()) {
-            throw new IllegalStateException("Keine CSV-Daten geladen. Bitte zuerst loadFile() aufrufen.");
+            this.loadFile();
         }
-        List<PriceEntry> priceEntries = new ArrayList<>();
+        this.priceEntries = new ArrayList<>();
         for (String[] columns : dataRows) {
             try {
                 // Parse Datum und Preis aus den angegebenen Spalten
                 String dateText = columns[dateIndex];
                 String priceText = columns[priceIndex];
-                LocalDate date = LocalDate.parse(dateText, formatter);           // erfordert Format YYYY-MM-DD
+                LocalDate date = LocalDate.parse(dateText, formatter);
                 double price = Double.parseDouble(priceText);
+                price = Math.round(price * 100) / 100;      //rundet auf 2 Stellen
                 priceEntries.add(new PriceEntry(date, price));
             } catch (Exception e) {
                 // Bei Format-Problemen: Zeile überspringen (und ggf. Fehlermeldung ausgeben)
                 System.err.println("Überspringe ungültige Zeile: " + e.getMessage());
             }
         }
-        return priceEntries;
+        return this;
+    }
+    
+    @Override
+    public List<PriceEntry> getEntrys() {
+        if (this.priceEntries == null || this.priceEntries.isEmpty()) {
+            throw new IllegalStateException("Bitte zuerst parseColumns(int dateIndex, int priceIndex) aufrufen."); 
+        }
+        return this.priceEntries;
     }
 }

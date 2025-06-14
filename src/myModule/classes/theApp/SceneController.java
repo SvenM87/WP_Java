@@ -14,6 +14,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.List;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
@@ -43,13 +44,24 @@ public class SceneController implements Initializable {
     
     @FXML
     private Button btn_csv_choose;
+    @FXML
+    private Button btn_csv_load;
         
     @FXML
     private TextArea txtArea_CSV_preview;
     
+    @FXML
     private TextField txtField_separator;
+    @FXML
+    private TextField txtField_date;
+    @FXML
+    private TextField txtField_price;
     
-    private final CsvImporter importer = new CsvImporter();
+    private boolean separatorChecked = false;
+    private boolean dateColumnChecked = false;
+    private boolean priceColumnChecked = false;
+    
+    private final CsvImporter csvImporter = null;
     private final ILoggingService logger = new FileLoggingService();
     
 //    private final FileChooser fileChooser = new FileChooser();
@@ -58,6 +70,8 @@ public class SceneController implements Initializable {
     private double timeout;
     private Stage stage;
     private Alert alert;
+    
+    private String[] allowedSeparators = {",", ";"};
     
     
     @FXML
@@ -132,9 +146,82 @@ public class SceneController implements Initializable {
 //            showAlert("Fehler", "Die CSV konnte nicht eingelesen werden:\n" + ex.getMessage());
 //        }
     }
+    
+//    @FXML
+//    private void checkSeparator(ActionEvent e) {
+//        String input = txtField_separator.getText();
+//        
+//        if (input != null && input.length() == 1 && Arrays.asList(allowedSeparators).contains(input)) {
+//            separatorChecked = true;
+//            if (separatorChecked && dateColumnChecked && priceColumnChecked) {
+//                btn_csv_load.setDisable(false);
+//            }
+//        } else {
+//            alert.setTitle("Ungültiger Separator");
+//            alert.setHeaderText(null);
+//            alert.setContentText("Bitte geben Sie einen gültigen Separator ein: ein Zeichen, ',' oder ';'");
+//            alert.showAndWait();
+//        }        
+//    }
+    
+    @FXML
+    private void checkDateInput(ActionEvent e) {
+        String input = txtField_date.getText();
+        
+        if (input != null && input.length() == 1 && Arrays.asList(allowedSeparators).contains(input)) {
+            separatorChecked = true;
+            if (separatorChecked && dateColumnChecked && priceColumnChecked) {
+                btn_csv_load.setDisable(false);
+            }
+        }
+    }
+    
+    @FXML
+    private void checkPriceInput(ActionEvent e) {
+        
+    }
+    
+    @FXML
+    private void readCsv(ActionEvent e) {
+        alert = new Alert(Alert.AlertType.ERROR);
+        
+        String sepInput = txtField_separator.getText();
+        String dateInput = txtField_date.getText();
+        String priceInput = txtField_price.getText();
+        int dateColumn, priceColumn;
+        
+        if (sepInput == null || sepInput.length() != 1 || !(Arrays.asList(allowedSeparators).contains(sepInput))) {
+            alert.setTitle("Ungültiger Separator");
+            alert.setHeaderText(null);
+            alert.setContentText("Bitte geben Sie einen gültigen Separator ein: ein Zeichen, ',' oder ';'");
+            alert.showAndWait();
+            return;
+        }
+        try {
+            dateColumn = Integer.parseInt(dateInput);
+        } catch (NumberFormatException ex) {
+            alert.setTitle("Ungültige Datum-Spalte");
+        alert.setHeaderText(null);
+        alert.setContentText("Datum: Bitte geben Sie einen gültigen Spaltenwert ein! (0-9)");
+        alert.showAndWait();
+        return;
+        }
+        try {
+            priceColumn = Integer.parseInt(priceInput);
+        } catch (NumberFormatException ex) {
+            alert.setTitle("Ungültige Preis-Spalte");
+        alert.setHeaderText(null);
+        alert.setContentText("Preis: Bitte geben Sie einen gültigen Spaltenwert ein! (0-9)");
+        alert.showAndWait();
+        return;
+        }
+        
+    }
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        
+        
 //        fileChooser.getExtensionFilters().add(txtFilter);
         
         //slider

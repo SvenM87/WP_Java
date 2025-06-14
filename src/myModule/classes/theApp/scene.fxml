@@ -100,15 +100,17 @@
                     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="5897.0" prefWidth="629.0">
                            <children>
                               <Button fx:id="btn_csv_choose" layoutX="169.0" layoutY="13.0" mnemonicParsing="false" onAction="#openCSV" text="CSV Laden" />
-                              <TextArea fx:id="txtArea_CSV_preview" layoutX="14.0" layoutY="42.0" prefHeight="109.0" prefWidth="366.0" text="Anzeige der ersten Zeilen (5)" />
-                              <TableView layoutX="14.0" layoutY="205.0" prefHeight="216.0" prefWidth="565.0">
+                              <TextArea fx:id="txtArea_CSV_preview" layoutX="14.0" layoutY="42.0" prefHeight="109.0" prefWidth="763.0" text="Anzeige der ersten Zeilen (5)" />
+                              <TableView layoutX="474.0" layoutY="190.0" prefHeight="295.0" prefWidth="301.0">
                                 <columns>
                                   <TableColumn prefWidth="75.0" text="Datum" />
                                   <TableColumn prefWidth="75.0" text="Schlusskurs" />
                                 </columns>
                               </TableView>
                               <TextField fx:id="txtField_separator" layoutX="14.0" layoutY="162.0" promptText="Separator" />
-                              <Button layoutX="209.0" layoutY="163.0" mnemonicParsing="false" onAction="#readCSV" text="Daten laden" />
+                              <Button fx:id="btn_csv_load" layoutX="48.0" layoutY="296.0" mnemonicParsing="false" onAction="#readCsv" text="Daten laden" />
+                              <TextField fx:id="txtField_date" layoutX="14.0" layoutY="204.0" onInputMethodTextChanged="#checkDateInput" promptText="Datum Spalte (0-9)" />
+                              <TextField fx:id="txtField_price" layoutX="14.0" layoutY="250.0" onInputMethodTextChanged="#checkPriceInput" promptText="Preis Spalte (0-9)" />
                            </children>
                         </AnchorPane>
                   </content>

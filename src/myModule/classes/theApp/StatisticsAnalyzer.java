@@ -159,4 +159,8 @@ public class StatisticsAnalyzer implements IStatisticsAnalyzer {
     public double getMaxReturn() {
         return Collections.max(this.returns);
     }
+    
+    public int getSeriesCount() {
+        return this.series.size();
+    }
 }

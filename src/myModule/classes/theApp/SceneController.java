@@ -306,9 +306,13 @@ public class SceneController implements Initializable {
 
         List<Double> returns = statAna.getReturns();
         statParams.clear();
-        statParams.add(new StatisticParam("Durchschnitt", statAna.getAverage()));
-        statParams.add(new StatisticParam("Standardabweichung", statAna.getStdDev()));
-        statParams.add(new StatisticParam("Median", statAna.getMedian()));
+        statParams.add(new StatisticParam("Anzahl Serien", statAna.getSeriesCount()));
+        statParams.add(new StatisticParam("Durchschnitt Rendite", statAna.getAverage()));
+        statParams.add(new StatisticParam("Standardabweichung Rendite", statAna.getStdDev()));
+        statParams.add(new StatisticParam("Median Rendite", statAna.getMedian()));
+        statParams.add(new StatisticParam("max. Rendite", statAna.getMaxReturn()));
+        statParams.add(new StatisticParam("min. Rendite", statAna.getMinReturn()));
+        statParams.add(new StatisticParam("max. Drawdown", statAna.getMaxDrawdown()));
         
         List<List<Double>> allSeries = statAna.getSeries();
         lineChart_chart.getData().clear();

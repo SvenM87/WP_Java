@@ -17,8 +17,9 @@ public class StatisticsAnalyzer implements IStatisticsAnalyzer {
     private List<Double> returns;
     private List<PriceEntry> prices;
     private int period;
+    private List<List<Double>> series;
     
-    public void StatisticAnalyzer(List<PriceEntry> prices, int period) {
+    public StatisticsAnalyzer(List<PriceEntry> prices, int period) {
         prices.sort(Comparator.comparing(PriceEntry::getDate));
         this.prices = prices;
         this.period = period;
@@ -30,17 +31,26 @@ public class StatisticsAnalyzer implements IStatisticsAnalyzer {
         
         iteration: {
             for(int i=0; i < prices.size(); i++) {
+                List<Double> currentSeries = new ArrayList<Double>();
                 PriceEntry current = prices.get(i);
                 LocalDate targetDate = current.getDate().plusYears(period);
 
                 PriceEntry future = null;
+                currentSeries.add(100.0);
                 for (int j=i+1; j < prices.size(); j++) {
                     if(!prices.get(j).getDate().isBefore(targetDate)) {
                         future = prices.get(j);
                         break;
+                    } else {
+                        double newPrice = prices.get(j).getClosePrice();
+                        double oldPrice = prices.get(j-1).getClosePrice();
+                        double diff = (newPrice - oldPrice) / oldPrice;
+                        double last = currentSeries.get(currentSeries.size()-1);
+                        currentSeries.add((diff+1)*last);
                     }
                 }
                 
+                series.add(currentSeries);
                 if(future == null) break iteration;
                 
                 returns.add((future.getClosePrice()- current.getClosePrice()) / current.getClosePrice());
@@ -53,6 +63,12 @@ public class StatisticsAnalyzer implements IStatisticsAnalyzer {
         
         this.returns = returns;
         return returns;
+    }
+    
+    public List<List<Double>> getSeries() {
+        if (this.series == null || this.series.isEmpty()) this.calculateReturns();
+        
+        return this.series;
     }
     
     @Override

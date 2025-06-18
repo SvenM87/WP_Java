@@ -6,7 +6,9 @@ package theApp;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -14,6 +16,7 @@ import java.util.List;
  * @author Sven
  */
 public class StatisticsAnalyzer implements IStatisticsAnalyzer {
+    double seriesStart = 100.0;
     private List<Double> returns;
     private List<PriceEntry> prices;
     private int period;
@@ -21,15 +24,18 @@ public class StatisticsAnalyzer implements IStatisticsAnalyzer {
     private double avg;
     private double median;
     private double standardDeviation;
+    private double drawdown;
     
     public StatisticsAnalyzer(List<PriceEntry> prices, int period) {
         prices.sort(Comparator.comparing(PriceEntry::getDate));
+        this.series = new ArrayList<>();
         this.prices = prices;
         this.period = period;
         this.returns = this.calculateReturns();
         this.avg = this.calculateAvg();
         this.standardDeviation = this.calculateStdDev();
         this.median = this.calculateMed();
+        this.drawdown = this.calculateMaxDrawdown();
     }    
     
     private List<Double> calculateReturns() {
@@ -42,7 +48,7 @@ public class StatisticsAnalyzer implements IStatisticsAnalyzer {
                 LocalDate targetDate = current.getDate().plusYears(period);
 
                 PriceEntry future = null;
-                currentSeries.add(100.0);
+                currentSeries.add(seriesStart);
                 for (int j=i+1; j < prices.size(); j++) {
                     if(!prices.get(j).getDate().isBefore(targetDate)) {
                         future = prices.get(j);
@@ -129,5 +135,20 @@ public class StatisticsAnalyzer implements IStatisticsAnalyzer {
     @Override
     public double getStdDev() {
         return this.standardDeviation;
+    }
+
+    private double calculateMaxDrawdown() {
+        double min = Double.MAX_VALUE;
+        
+        for (List<Double> iseries : this.series) {
+            double iseriesMin = Collections.min(iseries);
+            if (iseriesMin < min) min = iseriesMin;
+        }
+        double result = (seriesStart-min)/seriesStart;
+        return result;
+    }
+    
+    public double getMaxDrawdown() {
+        return this.drawdown;
     }
 }

@@ -11,7 +11,9 @@ import java.util.List;
  * @author Sven
  */
 public interface IStatisticsAnalyzer {
-    public List<Double> calculateReturns();
-    public double calculateAvg();
-    public double calculateStdDev();
+    public List<Double> getReturns();
+    public List<List<Double>> getSeries();
+    public double getMedian();
+    public double getAverage();
 }
+    

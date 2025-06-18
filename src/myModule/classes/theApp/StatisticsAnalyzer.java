@@ -18,15 +18,21 @@ public class StatisticsAnalyzer implements IStatisticsAnalyzer {
     private List<PriceEntry> prices;
     private int period;
     private List<List<Double>> series;
+    private double avg;
+    private double median;
+    private double standardDeviation;
     
     public StatisticsAnalyzer(List<PriceEntry> prices, int period) {
         prices.sort(Comparator.comparing(PriceEntry::getDate));
         this.prices = prices;
         this.period = period;
+        this.returns = this.calculateReturns();
+        this.avg = this.calculateAvg();
+        this.standardDeviation = this.calculateStdDev();
+        this.median = this.calculateMed();
     }    
     
-    @Override
-    public List<Double> calculateReturns() {
+    private List<Double> calculateReturns() {
         List<Double> returns = new ArrayList<>();
         
         iteration: {
@@ -71,8 +77,7 @@ public class StatisticsAnalyzer implements IStatisticsAnalyzer {
         return this.series;
     }
     
-    @Override
-    public double calculateAvg() {
+    private double calculateAvg() {
         if(returns == null || returns.isEmpty()) this.calculateReturns();
         double sum = 0.0;
         for (Double return1 : returns) {
@@ -82,8 +87,7 @@ public class StatisticsAnalyzer implements IStatisticsAnalyzer {
         return sum / returns.size();
     }
     
-    @Override
-    public double calculateStdDev() {
+    private double calculateStdDev() {
         double avg = this.calculateAvg();
         double sumSq = 0.0;
         for (double r : returns) {
@@ -92,7 +96,7 @@ public class StatisticsAnalyzer implements IStatisticsAnalyzer {
         return Math.sqrt(sumSq / returns.size());
     }
     
-    public double calculateMed() {
+    private double calculateMed() {
         if(returns == null || returns.isEmpty()) this.calculateReturns();
         List<Double> sortedReturns = this.returns;
         sortedReturns.sort(Double::compareTo);
@@ -105,5 +109,20 @@ public class StatisticsAnalyzer implements IStatisticsAnalyzer {
             double upper = sortedReturns.get((sortedReturns.size()/2)+1);
             return (lower+upper) / 2;
         }        
+    }
+
+    @Override
+    public List<Double> getReturns() {
+        return this.returns;
+    }
+
+    @Override
+    public double getMedian() {
+        return this.median;
+    }
+
+    @Override
+    public double getAverage() {
+        return this.avg;
     }
 }

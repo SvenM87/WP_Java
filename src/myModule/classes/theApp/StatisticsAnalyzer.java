@@ -125,4 +125,9 @@ public class StatisticsAnalyzer implements IStatisticsAnalyzer {
     public double getAverage() {
         return this.avg;
     }
+    
+    @Override
+    public double getStdDev() {
+        return this.standardDeviation;
+    }
 }

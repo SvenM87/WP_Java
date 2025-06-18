@@ -15,5 +15,6 @@ public interface IStatisticsAnalyzer {
     public List<List<Double>> getSeries();
     public double getMedian();
     public double getAverage();
+    public double getStdDev();
 }
     

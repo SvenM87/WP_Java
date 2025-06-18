@@ -49,6 +49,7 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
 <VBox prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="theApp.SceneController">
@@ -121,7 +122,7 @@
                   <content>
                     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                            <children>
-                              <LineChart fx:id="lineChart_chart" layoutX="16.0" layoutY="57.0" prefHeight="166.0" prefWidth="767.0">
+                              <LineChart fx:id="lineChart_chart" animated="false" createSymbols="false" layoutX="16.0" layoutY="57.0" prefHeight="166.0" prefWidth="767.0">
                                 <xAxis>
                                   <CategoryAxis side="BOTTOM" />
                                 </xAxis>
@@ -129,20 +130,26 @@
                                   <NumberAxis side="LEFT" />
                                 </yAxis>
                               </LineChart>
-                              <BarChart fx:id="barChart_distribution" layoutX="17.0" layoutY="220.0" prefHeight="262.0" prefWidth="490.0">
-                                <xAxis>
-                                  <CategoryAxis side="BOTTOM" />
-                                </xAxis>
-                                <yAxis>
-                                  <NumberAxis side="LEFT" />
-                                </yAxis>
-                              </BarChart>
                               <TableView fx:id="table_statKeys" layoutX="517.0" layoutY="217.0" prefHeight="268.0" prefWidth="267.0">
                                 <columns>
                                   <TableColumn fx:id="table_statKeys_key" prefWidth="126.0" text="Kenngröße" />
                                   <TableColumn fx:id="table_statKeys_value" prefWidth="140.0" text="Wert" />
                                 </columns>
                               </TableView>
+                              <Button fx:id="btn_start_statistics" layoutX="131.0" layoutY="14.0" mnemonicParsing="false" onAction="#calculateStatistics" text="Start" />
+                              <TextField fx:id="txtField_period" layoutX="17.0" layoutY="14.0" prefHeight="26.0" prefWidth="103.0" promptText="Periode (Jahre)" />
+                              <StackPane layoutX="15.0" layoutY="211.0" prefHeight="280.0" prefWidth="495.0">
+                                 <children>
+                                    <BarChart fx:id="barChart_distribution" animated="false">
+                                      <xAxis>
+                                        <CategoryAxis side="BOTTOM" />
+                                      </xAxis>
+                                      <yAxis>
+                                        <NumberAxis side="LEFT" />
+                                      </yAxis>
+                                    </BarChart>
+                                 </children>
+                              </StackPane>
                            </children></AnchorPane>
                   </content>
                 </TitledPane>

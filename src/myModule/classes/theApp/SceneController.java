@@ -15,17 +15,26 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.chart.AreaChart;
 import javafx.scene.chart.BarChart;
+import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 
 //import javafx.scene.control.*;
 import javafx.scene.control.Alert;
@@ -33,6 +42,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
+import javafx.scene.control.Spinner;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
@@ -52,12 +62,14 @@ public class SceneController implements Initializable {
     
     @FXML private Button btn_csv_choose;
     @FXML private Button btn_csv_load;
+    @FXML private Button btn_start_statistics;
         
     @FXML private TextArea txtArea_CSV_preview;
     
     @FXML private TextField txtField_separator;
     @FXML private TextField txtField_date;
-    @FXML private TextField txtField_price;
+    @FXML private TextField txtField_price;    
+    @FXML private TextField txtField_period;
     
     @FXML private CheckBox checkbox_csvHeader;
     
@@ -70,6 +82,7 @@ public class SceneController implements Initializable {
     @FXML private TableColumn table_statKeys_value;
     
     @FXML private LineChart lineChart_chart;
+    @FXML private AreaChart areaChart_distribution;
     @FXML private BarChart barChart_distribution;
     
     private boolean separatorChecked = false;
@@ -79,8 +92,9 @@ public class SceneController implements Initializable {
     
     private File csvFile;
     
-    private CsvImporter csvImporter = null;
     private final ILoggingService logger = new FileLoggingService();
+    private CsvImporter csvImporter = null;
+    private StatisticsAnalyzer statAna = null;
     
 //    private final FileChooser fileChooser = new FileChooser();
 //    private final FileChooser.ExtensionFilter txtFilter 
@@ -91,6 +105,21 @@ public class SceneController implements Initializable {
     
     private String[] allowedSeparators = {",", ";"};
     
+    public static class StatisticParam {
+        private final SimpleStringProperty name;
+        private final SimpleDoubleProperty value;
+
+        public StatisticParam(String name, double value) {
+            this.name = new SimpleStringProperty(name);
+            this.value = new SimpleDoubleProperty(value);
+        }
+
+        public String getName() { return name.get(); }
+        public SimpleStringProperty nameProperty() { return name; }
+
+        public double getValue() { return value.get(); }
+        public SimpleDoubleProperty valueProperty() { return value; }
+    }
     
     @FXML
     private void quit(ActionEvent e) {
@@ -213,20 +242,20 @@ public class SceneController implements Initializable {
             dateColumn = Integer.parseInt(dateInput);
         } catch (NumberFormatException ex) {
             alert.setTitle("Ungültige Datum-Spalte");
-        alert.setHeaderText(null);
-        alert.setContentText("Datum: Bitte geben Sie einen gültigen Spaltenwert ein! (0-9)");
-        alert.showAndWait();
-        return;
+            alert.setHeaderText(null);
+            alert.setContentText("Datum: Bitte geben Sie einen gültigen Spaltenwert ein! (0-9)");
+            alert.showAndWait();
+            return;
         }
         
         try {
             priceColumn = Integer.parseInt(priceInput);
         } catch (NumberFormatException ex) {
             alert.setTitle("Ungültige Preis-Spalte");
-        alert.setHeaderText(null);
-        alert.setContentText("Preis: Bitte geben Sie einen gültigen Spaltenwert ein! (0-9)");
-        alert.showAndWait();
-        return;
+            alert.setHeaderText(null);
+            alert.setContentText("Preis: Bitte geben Sie einen gültigen Spaltenwert ein! (0-9)");
+            alert.showAndWait();
+            return;
         }
         
         this.csvImporter = new CsvImporter(this.csvFile, sepInput, checkbox_csvHeader.isSelected());
@@ -239,6 +268,106 @@ public class SceneController implements Initializable {
         this.table_csv.setItems(observableEntries);
         
         this.csvReady = true;
+    }
+    
+    @FXML
+    public void calculateStatistics() {
+        alert = new Alert(Alert.AlertType.ERROR);
+
+        ObservableList<StatisticParam> statParams;        
+        String periodInput = txtField_period.getText();
+        int period;
+        
+        if (csvImporter == null) {            
+            alert.setTitle("CSV nicht geladen");
+            alert.setHeaderText(null);
+            alert.setContentText("Bitte zuerst eine CSV laden.");
+            alert.showAndWait();
+            return;
+        }
+        
+        try {
+            period = Integer.parseInt(periodInput);
+        } catch (NumberFormatException ex) {
+            alert.setTitle("Ungültige Periode");
+            alert.setHeaderText(null);
+            alert.setContentText("Bitte nur ganzzahlen für Periode verwenden");
+            alert.showAndWait();
+            return;
+        }
+        
+        statAna = new StatisticsAnalyzer(csvImporter.getEntrys(), period);
+        
+        table_statKeys_key.setCellValueFactory(new PropertyValueFactory<>("Name"));
+        table_statKeys_value.setCellValueFactory(new PropertyValueFactory<>("Value"));
+
+        statParams = FXCollections.observableArrayList();
+        table_statKeys.setItems(statParams);
+
+        List<Double> returns = statAna.getReturns();
+        statParams.clear();
+        statParams.add(new StatisticParam("Durchschnitt", statAna.getAverage()));
+        statParams.add(new StatisticParam("Standardabweichung", statAna.getStdDev()));
+        statParams.add(new StatisticParam("Median", statAna.getMedian()));
+        
+        List<List<Double>> allSeries = statAna.getSeries();
+        lineChart_chart.getData().clear();
+
+        int index = 0;
+        for (List<Double> ser : allSeries) {
+            XYChart.Series<String, Number> fxSeries = new XYChart.Series<>();
+            fxSeries.setName("Serie " + (++index));
+
+            for (int i = 0; i < ser.size(); i++) {
+                fxSeries.getData().add(new XYChart.Data<>(Integer.toString(i+1), ser.get(i)));
+            }
+
+            lineChart_chart.getData().add(fxSeries);
+        }
+
+        double min = Collections.min(returns);
+        double max = Collections.max(returns);
+        int bins = 20; // z. B. 20 Balken
+
+        double binWidth = (max - min) / bins;
+        Map<Integer, Integer> frequencies = new HashMap<>();
+        for (double r : returns) {
+            int b = (int)((r - min) / binWidth);
+            if (b == bins) b--; // Randfehler
+            frequencies.merge(b, 1, Integer::sum);
+        }
+
+        XYChart.Series<String, Number> histSeries = new XYChart.Series<>();
+        histSeries.setName("Histogramm");
+
+        for (int b = 0; b < bins; b++) {
+            String label = String.format("%.2f–%.2f",
+                min + b * binWidth,
+                min + (b + 1) * binWidth);
+            double freq = frequencies.getOrDefault(b, 0);
+            histSeries.getData().add(new XYChart.Data<>(label, freq));
+        }
+
+        double mean = statAna.getAverage();
+        double std = statAna.getStdDev();
+
+        XYChart.Series<String, Number> densitySeries = new XYChart.Series<>();
+        densitySeries.setName("Normalverteilung");
+
+        for (int b = 0; b < bins; b++) {
+            double x = min + (b + 0.5) * binWidth;
+            double density = (1 / (std * Math.sqrt(2 * Math.PI)))
+                * Math.exp(-0.5 * Math.pow((x - mean) / std, 2));
+            double scaled = density * returns.size() * binWidth;
+            densitySeries.getData().add(new XYChart.Data<>(Double.toString(x), scaled));
+        }
+
+//        areaChart_distribution.getData().clear();
+        barChart_distribution.getData().clear();
+        ((CategoryAxis)barChart_distribution.getXAxis()).setAnimated(false);
+//        areaChart_distribution.getData().addAll(densitySeries);
+        barChart_distribution.getData().addAll(histSeries);
+
     }
 
     @Override

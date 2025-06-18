@@ -117,6 +117,17 @@ public class StatisticsAnalyzer implements IStatisticsAnalyzer {
         }        
     }
 
+    private double calculateMaxDrawdown() {
+        double min = Double.MAX_VALUE;
+        
+        for (List<Double> iseries : this.series) {
+            double iseriesMin = Collections.min(iseries);
+            if (iseriesMin < min) min = iseriesMin;
+        }
+        double result = (seriesStart-min)/seriesStart;
+        return result;
+    }
+
     @Override
     public List<Double> getReturns() {
         return this.returns;
@@ -136,19 +147,16 @@ public class StatisticsAnalyzer implements IStatisticsAnalyzer {
     public double getStdDev() {
         return this.standardDeviation;
     }
-
-    private double calculateMaxDrawdown() {
-        double min = Double.MAX_VALUE;
-        
-        for (List<Double> iseries : this.series) {
-            double iseriesMin = Collections.min(iseries);
-            if (iseriesMin < min) min = iseriesMin;
-        }
-        double result = (seriesStart-min)/seriesStart;
-        return result;
-    }
     
     public double getMaxDrawdown() {
         return this.drawdown;
+    }
+    
+    public double getMinReturn() {
+        return Collections.min(this.returns);
+    }
+    
+    public double getMaxReturn() {
+        return Collections.max(this.returns);
     }
 }

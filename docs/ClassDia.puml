@@ -2,15 +2,17 @@
 
 ' Interfaces
 interface ICsvImporter {
-  + loadFile(path: String): List<String[]]
-  + parseColumns(dateIndex: int, priceIndex: int): List<PriceEntry]
+  + loadFile(path: String): List<String[]>
+  + parseColumns(dateIndex: int, priceIndex: int): List<PriceEntry>
   + setSeparator(separator: String): void
+  + getEntrys(): List<PriceEntry>
 }
 interface IStatisticsAnalyzer {
-  + calculateReturns(data: List<PriceEntry>): List<Double]
-  + calculateMean(returns: List<Double>): double
-  + calculateStdDev(returns: List<Double>): double
-  + calculateSharpeRatio(returns: List<Double>, riskFreeRate: double): double
+  + getReturns(): List<Double>
+  + getSeries(): List<List<Double>> 
+  + getMedian(): double
+  + getAverage(): double
+  + getStdDev(): double
 }
 interface IPlanSimulator {
   + runSimulation(): List<Double]
@@ -24,6 +26,7 @@ interface IChartGenerator {
 interface ILoggingService {
   + logInfo(message: String): void
   + logError(message: String, exception: Exception): void
+  + getLogFilePath(): String
 }
 
 ' Concrete Classes
@@ -31,21 +34,40 @@ class CsvImporter implements ICsvImporter {
   - separator: String
   - csvFile: File
   - hasHeader: boolean
-  + loadFile(path: String): List<String[]]
-  + parseColumns(dateIndex: int, priceIndex: int): List<PriceEntry]
+  - priceEntries: List<PriceEntry>
+  - formatter: DateTimeFormatter
+  + loadFile(path: String): List<String[]>
+  + parseColumns(dateIndex: int, priceIndex: int): List<PriceEntry>
   + setSeparator(separator: String): void
+  + getEntrys(): List<PriceEntry>
 }
 
 class PriceEntry {
   - date: LocalDate
   - closePrice: double
+  + getDate(): LocalDate
+  + getClosePrice(): double
 }
 
 class StatisticsAnalyzer implements IStatisticsAnalyzer {
-  + calculateReturns(data: List<PriceEntry>): List<Double]
-  + calculateMean(returns: List<Double>): double
-  + calculateStdDev(returns: List<Double>): double
-  + calculateSharpeRatio(returns: List<Double>, riskFreeRate: double): double
+  - prices: List<PriceEntry>
+  - returns: List<Double>
+  - series: List<List<Double>>
+  - avg: double
+  - median: double
+  - standardDeviation: double
+  - drawdown: double
+  - calculateReturns(): List<Double>
+  + getSeries(): List<List<Double>>
+  - calculateAvg(): double
+  - calculateStdDev(): double
+  - calculateMed(): double
+  - calculateMaxDrawdown(): double
+  + getReturns(): List<Double>
+  + getSeries(): List<List<Double>> 
+  + getMedian(): double
+  + getAverage(): double
+  + getStdDev(): double
 }
 
 abstract class PlanSimulator implements IPlanSimulator {
@@ -80,26 +102,43 @@ class FileLoggingService implements ILoggingService {
   - logFile: File
   + logInfo(message: String): void
   + logError(message: String, exception: Exception): void
+  - writeLog(level: String, message: String): void
+  + getLogFilePath(): String
 }
 
 class SceneController {
-  - 
+  - [FXML Elements]
+  - separatorChecked: boolean = false
+  - dateColumnChecked: boolean = false
+  - priceColumnChecked: boolean = false
+  - csvReady: boolean = false
+  - csvFile: File
   - loggingService: ILoggingService
-  + switchToImportView(): void
-  + 
+  - csvImporter: ICsvImporter
+  - statAna: IStatisticsAnalyzer
+  - timeout: double
+  - stage: Stage
+  - alert: Alert
+  - quit(e: ActionEvent): void
+  - showInfo(e: ActionEvent): void
+  - openCSV(e: ActionEvent): void
+  - readCsv(e: ActionEvent): void
+  - calculateStatistics(): void
+  - initialize(url: URL, rb: ResourceBundle): void
 }
 
 ' Relationships
 CsvImporter *-- "0..*" PriceEntry : contains
 
-StatisticsAnalyzer --> CsvImporter : verwendet
-SavingsPlanSimulator --> StatisticsAnalyzer : nutzt
-PayoutPlanSimulator --> StatisticsAnalyzer : nutzt
 PlanSimulator --> ConfidenceInterval : gibt zurück
 ChartGenerator --> PlanSimulator : visualisiert
 
 ' Injection (composition)
 
 SceneController *-- ILoggingService
+SceneController *-- ICsvImporter
+SceneController *-- IStatisticsAnalyzer
+SceneController *-- "2" IPlanSimulator
+SceneController *-- IChartGenerator
 
 @enduml

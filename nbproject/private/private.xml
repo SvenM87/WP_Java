@@ -7,10 +7,12 @@
             <file>file:/C:/Users/iostr/Documents/NetBeansProjects/WP_Java/src/myModule/classes/theApp/MainApp.java</file>
             <file>file:/C:/Users/iostr/Documents/NetBeansProjects/WP_Java/src/myModule/classes/theApp/PriceEntry.java</file>
             <file>file:/C:/Users/iostr/Documents/NetBeansProjects/WP_Java/src/myModule/classes/theApp/ConfidenceInterval.java</file>
-            <file>file:/C:/Users/iostr/Documents/NetBeansProjects/WP_Java/src/myModule/classes/theApp/ICsvImporter.java</file>
-            <file>file:/C:/Users/iostr/Documents/NetBeansProjects/WP_Java/src/myModule/classes/theApp/CsvImporter.java</file>
             <file>file:/C:/Users/iostr/Documents/NetBeansProjects/WP_Java/src/myModule/classes/theApp/ILoggingService.java</file>
             <file>file:/C:/Users/iostr/Documents/NetBeansProjects/WP_Java/src/myModule/classes/theApp/FileLoggingService.java</file>
+            <file>file:/C:/Users/iostr/Documents/NetBeansProjects/WP_Java/src/myModule/classes/theApp/ICsvImporter.java</file>
+            <file>file:/C:/Users/iostr/Documents/NetBeansProjects/WP_Java/src/myModule/classes/theApp/IStatisticsAnalyzer.java</file>
+            <file>file:/C:/Users/iostr/Documents/NetBeansProjects/WP_Java/src/myModule/classes/theApp/CsvImporter.java</file>
+            <file>file:/C:/Users/iostr/Documents/NetBeansProjects/WP_Java/src/myModule/classes/theApp/StatisticsAnalyzer.java</file>
         </group>
     </open-files>
 </project-private>
